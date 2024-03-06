@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS20 CRUD_2</title>
+    <style>
+        label{display: inline-block; width:80px;}
+        input,select{width: 120px;}
+    </style>
+</head>
+<body>
+    <label>Navn</label> <input type="text" id="Namebox"> <br><br>
+    <label>RollNo</label> <input type="text" id="Rollbox"> <br><br>
+    <label>Klasse</label> <input type="text" id="Secbox"> <br><br>
+    <label>Kjønn</label>
+    <select id="Genbox">
+        <option value="Male">Mann</option>
+        <option value="Female">Kvinne</option>
+    </select>
+
+    <hr>
+    <button id="Insbtn">Legg til</button>
+    <button id="Selbtn">Velg</button>
+    <button id="Updbtn">Oppdater</button>
+    <button id="Delbtn">Slett</button>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCW4IZZhsx7wdQeQFf8tWAo_A8A9PaFpgc",
+          authDomain: "js-20-crud-2.firebaseapp.com",
+          projectId: "js-20-crud-2",
+          storageBucket: "js-20-crud-2.appspot.com",
+          messagingSenderId: "832897696095",
+          appId: "1:832897696095:web:111f201a0418c4d25936ea",
+          databaseURL: "https://js-20-crud-2-default-rtdb.europe-west1.firebasedatabase.app",
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import {getDatabase, ref, set, get, child, update, remove}
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"
+
+        const db = getDatabase()
+
+        // References -------
+        let namebox = document.getElementById("Namebox")
+        let rollbox = document.getElementById("Rollbox")
+        let secbox = document.getElementById("Secbox")
+        let genbox = document.getElementById("Genbox")
+
+        let insBtn = document.getElementById("Insbtn")
+        let selBtn = document.getElementById("Selbtn")
+        let updBtn = document.getElementById("Updbtn")
+        let delBtn = document.getElementById("Delbtn")
+
+        // Insert data function -------
+
+        function insertData() {
+            set(ref(db, "Elever/" + rollbox.value), {
+                ElevNavn: namebox.value,
+                RollNo: rollbox.value,
+                Klasse: secbox.value,
+                Kjonn: genbox.value
+            })
+            .then(()=>{
+                alert("Data lagret")
+            })
+            .catch((error)=>{
+                alert("Data ikke lagret, error " + error)
+            })
+        }
+
+        // Select data function
+
+        function selectData() {
+            const dbref = ref(db)
+
+            get(child(dbref, "Elever/" + rollbox.value)).then((snapshot)=>{
+                if (snapshot.exists()) {
+                    namebox.value = snapshot.val().ElevNavn
+                    secbox.value = snapshot.val().Klasse
+                    genbox.value = snapshot.val().Kjonn
+                } else {
+                    alert("No data found")
+                }
+            })
+            .catch((error)=>{
+                alert("Data ikke lagret, error " + error)
+            })
+        }
+
+        // Update data function
+
+        function updateData() {
+            update(ref(db, "Elever/" + rollbox.value), {
+                ElevNavn: namebox.value,
+                Klasse: secbox.value,
+                Kjonn: genbox.value
+            })
+            .then(()=>{
+                alert("Data oppdatert")
+            })
+            .catch((error)=>{
+                alert("Data ikke oppdatert, error " + error)
+            })
+        }
+
+        // Delete data function
+
+        function deleteData() {
+            remove(ref(db, "Elever/" + rollbox.value))
+            .then(()=>{
+                alert("Data slettet")
+            })
+            .catch((error)=>{
+                alert("Data ikke slettet, error " + error)
+            })
+        }
+
+        // Eventilsteners
+        insBtn.addEventListener("click", insertData)
+        selBtn.addEventListener("click", selectData)
+        updBtn.addEventListener("click", updateData)
+        delBtn.addEventListener("click", deleteData)
+      </script>
+</body>
+</html>
